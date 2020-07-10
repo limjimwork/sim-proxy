@@ -4,6 +4,9 @@ import * as cors from "cors";
 import axios from "axios";
 import * as serverless from "serverless-http";
 
+import * as dotenv from "dotenv";
+dotenv.config();
+
 class App {
   public app: express.Application;
 
@@ -18,8 +21,10 @@ class App {
   }
 
   private configureRoutes(): void {
-    const router = express.Router();
-    router.get("/orderbook", async (req: Request, res: Response) => {
+    const coindataRouter = express.Router();
+    const weatherInfoRouter = express.Router();
+
+    coindataRouter.get("/orderbook", async (req: Request, res: Response) => {
       const currency = req.query["currency"];
       const url = `https://api.coinone.co.kr/orderbook`;
       try {
@@ -31,11 +36,11 @@ class App {
         res.send(originalRes.data);
       } catch (err) {
         res.status(400);
-        res.send({ message: "failed to request orderbook." });
+        res.send({ message: "Failed to request orderbook." });
       }
     });
 
-    router.get("/ticker_utc", async (req: Request, res: Response) => {
+    coindataRouter.get("/ticker_utc", async (req: Request, res: Response) => {
       const currency = req.query["currency"];
       const url = `https://api.coinone.co.kr/ticker_utc`;
       try {
@@ -47,11 +52,11 @@ class App {
         res.send(originalRes.data);
       } catch (err) {
         res.status(400);
-        res.send({ message: "failed to request ticker_utc." });
+        res.send({ message: "Failed to request ticker_utc." });
       }
     });
 
-    router.get("/trades", async (req: Request, res: Response) => {
+    coindataRouter.get("/trades", async (req: Request, res: Response) => {
       const currency = req.query["currency"];
       const url = `https://api.coinone.co.kr/trades`;
       try {
@@ -63,11 +68,30 @@ class App {
         res.send(originalRes.data);
       } catch (err) {
         res.status(400);
-        res.send({ message: "failed to request trades." });
+        res.send({ message: "Failed to request trades." });
       }
     });
 
-    this.app.use("/.netlify/functions/api", router);
+    weatherInfoRouter.get("/", async (req: Request, res: Response) => {
+      const url =
+        "http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getCtprvnMesureLIst";
+      try {
+        const originalRes = await axios.get(url, {
+          params: {
+            ServiceKey: process.env.WEATHERINFO_API_SERVICE_KEY,
+            _returnType: "json",
+            ...req.query,
+          },
+        });
+        res.send(originalRes.data);
+      } catch (err) {
+        res.status(400);
+        res.send({ message: "Failed to request." });
+      }
+    });
+
+    this.app.use("/.netlify/functions/api/coindata", coindataRouter);
+    this.app.use("/.netlify/functions/api/weatherInfo", weatherInfoRouter);
   }
 
   public listen(port: string, cb: () => void): void {

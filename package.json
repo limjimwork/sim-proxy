@@ -9,7 +9,7 @@
     "build": "npm run build:tsc && npm run build:netlify",
     "dev": "nodemon --watch src --delay 1 --exec 'ts-node' src/index.ts",
     "start": "npm run build:tsc && netlify-lambda serve dist/functions",
-    "deploy": "netlify deploy --functions=functions --dir=."
+    "deploy": "npm run build && netlify deploy --functions=functions --dir=."
   },
   "author": "",
   "license": "ISC",
@@ -24,6 +24,7 @@
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.7",
     "@types/nodemon": "^1.19.0",
+    "dotenv": "^8.2.0",
     "netlify-lambda": "^1.6.3",
     "nodemon": "^2.0.4",
     "ts-node": "^8.10.2",

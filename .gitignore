@@ -1,5 +1,6 @@
 .netlify
 .vscode
+.env
 /node_modules
 /dist
 /functions
