@@ -1,0 +1,32 @@
+{
+  "name": "sim-proxy",
+  "version": "1.0.0",
+  "description": "CORS 해결을 위한 proxy 서버입니다.",
+  "main": "src/index.ts",
+  "scripts": {
+    "build:tsc": "tsc",
+    "build:netlify": "netlify-lambda build dist/functions",
+    "build": "npm run build:tsc && npm run build:netlify",
+    "dev": "nodemon --watch src --delay 1 --exec 'ts-node' src/index.ts",
+    "start": "npm run build:tsc && netlify-lambda serve dist/functions",
+    "deploy": "netlify deploy --functions=functions --dir=."
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "serverless-http": "^2.5.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/cors": "^2.8.6",
+    "@types/express": "^4.17.7",
+    "@types/nodemon": "^1.19.0",
+    "netlify-lambda": "^1.6.3",
+    "nodemon": "^2.0.4",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.6"
+  }
+}
